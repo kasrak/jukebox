@@ -24,16 +24,21 @@
     NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
     [httpServer setDocumentRoot:webPath];
     
+    [httpServer setDefaultHeader:@"Access-Control-Allow-Origin" value:@"*"];
+    
     [httpServer handleMethod:@"GET" withPath:@"/songs" block:^(RouteRequest *req, RouteResponse *res) {
+        [res setHeader:@"Content-type" value:@"application/json"];
+        
         if (library) {
-            [res setHeader:@"Content-type" value:@"application/json"];
             [res respondWithString:library];
         } else {
-            [res respondWithString:@"NOT READY"];
+            [res respondWithString:@"{ 'error': 'not ready' }"];
         }
     }];
     
     [httpServer handleMethod:@"GET" withPath:@"/play/*" block:^(RouteRequest *req, RouteResponse *res) {
+        [res setHeader:@"Content-type" value:@"application/json"];
+
         NSArray *wildcards = [req.params objectForKey:@"wildcards"];
         unsigned long long ull = strtoull([[wildcards objectAtIndex:0] UTF8String], NULL, 0);
         NSNumber *persistentID = [NSNumber numberWithUnsignedLongLong:ull];
@@ -47,10 +52,26 @@
             [player stop];
             [player setNowPlayingItem:song];
             [player play];
-            [res respondWithString:[NSString stringWithFormat:@"PLAYING"]];
+            [res respondWithString:@"{}"];
         } else {
-            [res respondWithString:[NSString stringWithFormat:@"NOT FOUND %@", persistentID]];
+            [res respondWithString:@"{ 'error': 'not found' }"];
         }
+    }];
+    
+    [httpServer handleMethod:@"GET" withPath:@"/next" block:^(RouteRequest *req, RouteResponse *res) {
+        [player skipToNextItem];
+        [res respondWithString:@"{}"];
+    }];
+    
+    [httpServer handleMethod:@"GET" withPath:@"/toggle_play" block:^(RouteRequest *req, RouteResponse *res) {
+        if (player.playbackState == MPMusicPlaybackStatePlaying) {
+            [player pause];
+            [res respondWithString:@"{ 'status': 'paused' }"];
+        } else if (player.playbackState == MPMusicPlaybackStatePaused || player.playbackState == MPMusicPlaybackStateStopped) {
+            [player play];
+            [res respondWithString:@"{ 'status': 'playing' }"];
+        }
+        [res respondWithString:@"{ 'status': 'unknown' }"];
     }];
     
     NSError *err;
@@ -70,7 +91,6 @@
     [player setQueueWithQuery:[MPMediaQuery songsQuery]];
     [player setShuffleMode:MPMusicShuffleModeSongs];
     [player setRepeatMode:MPMusicRepeatModeAll];
-    [player stop];
     
     [self performSelectorInBackground:@selector(scanLibrary) withObject:self];
     
@@ -95,7 +115,7 @@
         
         NSArray *song = [NSArray arrayWithObjects:
                          [item valueForProperty:MPMediaItemPropertyTitle],
-                         [item valueForProperty:MPMediaItemPropertyPersistentID],
+                         [NSString stringWithFormat:@"%@", [item valueForProperty:MPMediaItemPropertyPersistentID]],
                          nil];
         
         NSMutableDictionary *albumDict = [songs objectForKey:artist];

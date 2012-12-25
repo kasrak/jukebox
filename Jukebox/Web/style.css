@@ -1,0 +1,46 @@
+body {
+    background: #eee;
+    color: #111;
+    font: 14pt/22pt Helvetica, Arial, sans-serif;
+}
+
+* {
+    outline: none;
+}
+
+button, input {
+    font: inherit;
+    border-radius: 10px;
+    background: #eee;
+    padding: 5px;
+}
+
+#controls {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    height: 50px;
+    background: #fff;
+}
+
+#library {
+    margin-top: 120px;
+    margin-left: 20px;
+}
+
+#library h3 {
+    margin-left: 20px;
+}
+
+#library a {
+    padding-left: 40px;
+    display: block;
+}
+
+#library a:hover {
+    text-decoration: underline;
+    background: #ffa;
+    cursor: pointer;
+}
