@@ -9,8 +9,14 @@
 #import <UIKit/UIKit.h>
 
 @class ViewController;
+@class RoutingHTTPServer;
+@class MPMusicPlayerController;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate> {
+    RoutingHTTPServer *httpServer;
+    NSString *library;
+    MPMusicPlayerController *player;
+}
 
 @property (strong, nonatomic) UIWindow *window;
 
