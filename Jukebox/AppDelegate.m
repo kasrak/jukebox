@@ -66,12 +66,47 @@
     [httpServer handleMethod:@"GET" withPath:@"/toggle_play" block:^(RouteRequest *req, RouteResponse *res) {
         if (player.playbackState == MPMusicPlaybackStatePlaying) {
             [player pause];
-            [res respondWithString:@"{ 'status': 'paused' }"];
+            [res respondWithString:@"{ 'state': 'paused' }"];
         } else if (player.playbackState == MPMusicPlaybackStatePaused || player.playbackState == MPMusicPlaybackStateStopped) {
             [player play];
-            [res respondWithString:@"{ 'status': 'playing' }"];
+            [res respondWithString:@"{ 'state': 'playing' }"];
         }
-        [res respondWithString:@"{ 'status': 'unknown' }"];
+        [res respondWithString:@"{ 'state': 'unknown' }"];
+    }];
+    
+    [httpServer handleMethod:@"GET" withPath:@"/volume/*" block:^(RouteRequest *req, RouteResponse *res) {
+        NSString *inputVolume = [[req.params objectForKey:@"wildcards"] objectAtIndex:0];
+        float vol = [inputVolume integerValue] / 100.0;
+        [player setVolume:vol];
+        [res respondWithString:@"{}"];
+    }];
+    
+    [httpServer handleMethod:@"GET" withPath:@"/status" block:^(RouteRequest *req, RouteResponse *res) {
+        NSString *state;
+        switch (player.playbackState) {
+            case MPMusicPlaybackStateStopped:
+            case MPMusicPlaybackStatePaused:
+                state = @"paused";
+                break;
+            case MPMusicPlaybackStatePlaying:
+                state = @"playing";
+                break;
+            default:
+                state = @"unknown";
+                break;
+        }
+        
+        MPMediaItem *now_playing = [player nowPlayingItem];
+        NSDictionary *status = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [NSNumber numberWithFloat:player.volume*100], @"volume",
+                                state, @"state",
+                                [now_playing valueForKey:MPMediaItemPropertyTitle], @"title",
+                                [now_playing valueForKey:MPMediaItemPropertyAlbumTitle], @"album",
+                                [now_playing valueForKey:MPMediaItemPropertyArtist], @"artist",
+                                nil];
+        
+        NSData *json = [NSJSONSerialization dataWithJSONObject:status options:NSJSONWritingPrettyPrinted error:nil];
+        [res respondWithString:[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]];
     }];
     
     NSError *err;

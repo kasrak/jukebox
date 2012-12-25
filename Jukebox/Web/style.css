@@ -23,6 +23,21 @@ button, input {
     padding: 20px;
     height: 50px;
     background: #fff;
+    text-align: center;
+}
+
+#controls button {
+    float: left;
+}
+
+#volume {
+    float: right;
+    width: 300px;
+    margin: 20px 50px 0 0;
+}
+
+#now_playing .title {
+    font-weight: bold;
 }
 
 #library {
