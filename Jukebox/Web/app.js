@@ -1,6 +1,5 @@
-var server = 'http://192.168.0.102:8989',
+var server = '',
     library = null,
-    artists = null,
     $library = null;
 
 function getSongs() {
@@ -10,7 +9,6 @@ function getSongs() {
                 setTimeout(getSongs, 500);
             } else {
                 library = data;
-                artists = Object.keys(library).sort();
                 renderLibrary();
             }
         } else {
@@ -60,6 +58,7 @@ function renderLibrary() {
     }
 
     $library.html('');
+    var artists = Object.keys(library).sort();
 
     for (var i in artists) {
         var artist = artists[i],
