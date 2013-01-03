@@ -1,5 +1,7 @@
-var server = '',
-    library = null;
+var server = 'http://192.168.0.102:8989',
+    library = null,
+    artists = null,
+    $library = null;
 
 function getSongs() {
     $.getJSON(server + '/songs', function(data, status) {
@@ -8,6 +10,7 @@ function getSongs() {
                 setTimeout(getSongs, 500);
             } else {
                 library = data;
+                artists = Object.keys(library).sort();
                 renderLibrary();
             }
         } else {
@@ -51,10 +54,10 @@ function debounce(fn, wait, context) {
 }
 
 function renderLibrary() {
-    if (library === null) return;
-
-    var artists = Object.keys(library).sort(),
-        $library = $('#library');
+    if (library === null) {
+        $library.html('No songs to display');
+        return;
+    }
 
     $library.html('');
 
@@ -62,23 +65,31 @@ function renderLibrary() {
         var artist = artists[i],
             albums = Object.keys(library[artist]).sort();
 
-        $library.append('<h2>' + artist + '</h2>');
+        $artist = $('<div class="artist">');
+        $artist.append('<br><a class="artist">' + artist + '</a>');
         
+        $albums = $('<div class="albums">');
         for (var j in albums) {
             var album = albums[j],
                 songs = library[artist][album];
 
-            $library.append('<h3>' + album + '</h3>');
+            $albums.append('<h3>' + album + '</h3>');
             
             for (var k in songs) {
                 var song = songs[k];
-                $library.append('<a data-id="' + song[1] + '">' + song[0] + '</a>');
+                $albums.append('<a class="song" data-id="' + song[1] + '">' + song[0] + '</a><br>');
             }
         }
+
+        $artist.append($albums);
+        $library.append($artist);
     }
+    $('div.albums').hide();
 }
 
 $(function() {
+    $library = $('#library');
+
     getSongs();
     getStatus();
 
@@ -105,4 +116,13 @@ $(function() {
     $('#volume').on('change', debounce(function() {
         $.get(server + '/volume/' + $(this).val());
     }, 100, $('#volume')));
+
+    $library.on('click', 'a.artist', function() {
+        $albums = $(this).parents('.artist').children('.albums');
+        if ($albums.css('display') !== 'none') {
+            $albums.hide();
+        } else {
+            $albums.show();
+        }
+    });
 });
