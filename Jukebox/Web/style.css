@@ -28,11 +28,14 @@ button, input {
 
 #controls button {
     float: left;
+    width: 42px;
+    height: 42px;
+    margin-left: 5px;
 }
 
 #volume {
     float: right;
-    width: 300px;
+    width: 200px;
     margin: 20px 50px 0 0;
 }
 
