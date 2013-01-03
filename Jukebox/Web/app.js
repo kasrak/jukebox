@@ -1,4 +1,4 @@
-var server = 'http://192.168.0.102:8989',
+var server = '',
     library = null,
     $library = null;
 
