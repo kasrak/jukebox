@@ -1,4 +1,4 @@
-var server = '',
+var server = 'http://192.168.0.102:8989',
     library = null,
     $library = null;
 
@@ -29,9 +29,11 @@ function getStatus() {
         $volume.val(data.volume);
 
         if (data.state == 'playing') {
-            $play.html('Pause');
+            $play.removeClass();
+            $play.addClass('icon-pause');
         } else if (data.state == 'paused') {
-            $play.html('Play');
+            $play.removeClass();
+            $play.addClass('icon-play');
         }
 
         setTimeout(getStatus, 1500);
@@ -97,6 +99,10 @@ $(function() {
         $.get(server + '/play/' + id);
     });
 
+    $('#previous').on('mousedown', function() {
+        $.get(server + '/previous');
+    });
+
     $('#next').on('mousedown', function() {
         $.get(server + '/next');
     });
@@ -105,10 +111,12 @@ $(function() {
         $.get(server + '/toggle_play');
 
         var $this = $(this);
-        if ($this.html() == 'Play') {
-            $this.html('Pause');
-        } else if ($this.html() == 'Pause') {
-            $this.html('Play');
+        if ($this.hasClass('icon-play')) {
+            $this.removeClass();
+            $this.addClass('icon-pause');
+        } else if ($this.hasClass('icon-pause')) {
+            $this.removeClass();
+            $this.addClass('icon-play');
         }
     });
 

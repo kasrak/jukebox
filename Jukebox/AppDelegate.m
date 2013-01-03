@@ -63,6 +63,11 @@
         [res respondWithString:@"{}"];
     }];
     
+    [httpServer handleMethod:@"GET" withPath:@"/previous" block:^(RouteRequest *req, RouteResponse *res) {
+        [player skipToPreviousItem];
+        [res respondWithString:@"{}"];
+    }];
+    
     [httpServer handleMethod:@"GET" withPath:@"/toggle_play" block:^(RouteRequest *req, RouteResponse *res) {
         if (player.playbackState == MPMusicPlaybackStatePlaying) {
             [player pause];

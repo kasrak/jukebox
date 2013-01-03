@@ -3,6 +3,7 @@
     <head>
         <title>Jukebox</title>
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="font-awesome.css">
         <script src="zepto.min.js"></script>
         <script src="app.js"></script>
     </head>
@@ -10,8 +11,9 @@
         <div id="controls">
             <input type="range" min="0" max="100" id="volume">
 
-            <button id="play">Play/pause</button>
-            <button id="next">Next</button>
+            <button id="previous" class="icon-fast-backward"></button>
+            <button id="play" class="icon-play"></button>
+            <button id="next" class="icon-fast-forward"></button>
 
             <div id="now_playing">
                 <div class="title"></div>
