@@ -1,6 +1,65 @@
-var server = '',
-    library = null,
-    $library = null;
+"use strict";
+
+var $library, library; // xxx 
+
+var server = '';
+
+var Status = {
+    data: {},
+    callbacks: {},
+
+    update: function() {
+        var self = this;
+        $.getJSON(server + '/status', function(data) {
+            _.each(data, function(value, key) {
+                self.set(key, value, false);
+            });
+
+            if (self.isUpdating) {
+                setTimeout(function() {
+                    Status.update();
+                }, 1500);
+            }
+        });
+    },
+
+    startUpdating: function() {
+        this.isUpdating = true;
+        this.update();
+    },
+
+    stopUpdating: function() {
+        this.isUpdating = false;
+    },
+
+    set: function(key, value, silent) {
+        if (!silent && value != this.data[key]) {
+            this.trigger(key, value);
+        }
+
+        this.data[key] = value;
+    },
+
+    get: function(key) {
+        return this.data[key];
+    },
+
+    on: function(event, fn) {
+        if (!this.callbacks[event]) {
+            this.callbacks[event] = [];
+        }
+
+        this.callbacks[event].push(fn);
+
+        return this;
+    },
+
+    trigger: function(event, value) {
+        _.each(this.callbacks[event], function(fn) {
+            fn(event, value);
+        });
+    }
+};
 
 function getSongs() {
     $.getJSON(server + '/songs', function(data, status) {
@@ -17,42 +76,6 @@ function getSongs() {
     });
 }
 
-function getStatus() {
-    $.getJSON(server + '/status', function(data) {
-        var $np = $('#now_playing'),
-            $volume = $('#volume'),
-            $play = $('#play');
-
-        $np.find('.title').html(data.title);
-        $np.find('.artist').html(data.artist);
-
-        $volume.val(data.volume);
-
-        if (data.state == 'playing') {
-            $play.removeClass();
-            $play.addClass('icon-pause');
-        } else if (data.state == 'paused') {
-            $play.removeClass();
-            $play.addClass('icon-play');
-        }
-
-        setTimeout(getStatus, 1500);
-    });
-}
-
-function debounce(fn, wait, context) {
-    var timer;
-    return function() {
-        if (timer) {
-            clearTimeout(timer);
-        }
-
-        timer = setTimeout(function() {
-            fn.apply(context, arguments)
-        }, wait);
-    };
-}
-
 function renderLibrary() {
     if (library === null) {
         $library.html('No songs to display');
@@ -64,12 +87,10 @@ function renderLibrary() {
 
     for (var i in artists) {
         var artist = artists[i],
-            albums = Object.keys(library[artist]).sort();
-
-        $artist = $('<div class="artist">');
-        $artist.append('<br><a class="artist">' + artist + '</a>');
+            albums = Object.keys(library[artist]).sort(),
+            $artist = $('<div class="artist">').html('<br><a class="artist">' + artist + '</a>'),
+            $albums = $('<div class="albums">');
         
-        $albums = $('<div class="albums">');
         for (var j in albums) {
             var album = albums[j],
                 songs = library[artist][album];
@@ -90,14 +111,26 @@ function renderLibrary() {
 
 $(function() {
     $library = $('#library');
+    var $np = $('#now_playing'),
+        $volume = $('#volume'),
+        $play = $('#play');
 
     getSongs();
-    getStatus();
 
-    $('#library').on('mousedown', 'a', function() {
-        var id = $(this).attr('data-id');
-        $.get(server + '/play/' + id);
-    });
+    Status.on('artist', function(key, value) {
+        $np.find('.artist').html(value);
+    }).on('title', function(key, value) {
+        $np.find('.title').html(value);
+    }).on('volume', function(key, value) {
+        $volume.val(value);
+    }).on('state', function(key, value) {
+        $play.removeClass('icon-pause icon-play');
+        if (value == 'playing') {
+            $play.addClass('icon-pause');
+        } else {
+            $play.addClass('icon-play');
+        }
+    }).startUpdating();
 
     $('#previous').on('mousedown', function() {
         $.get(server + '/previous');
@@ -107,29 +140,23 @@ $(function() {
         $.get(server + '/next');
     });
 
-    $('#play').on('mousedown', function() {
+    $play.on('mousedown', function() {
         $.get(server + '/toggle_play');
-
-        var $this = $(this);
-        if ($this.hasClass('icon-play')) {
-            $this.removeClass();
-            $this.addClass('icon-pause');
-        } else if ($this.hasClass('icon-pause')) {
-            $this.removeClass();
-            $this.addClass('icon-play');
-        }
+        var state = Status.get('state') == 'paused' ? 'playing' : 'paused';
+        Status.set('state', state);
     });
 
-    $('#volume').on('change', debounce(function() {
-        $.get(server + '/volume/' + $(this).val());
-    }, 100, $('#volume')));
+    $volume.on('change', _.debounce(
+        _.bind(function() {
+            $.get(server + '/volume/' + $(this).val());
+        }, $volume)
+    , 100));
 
     $library.on('click', 'a.artist', function() {
-        $albums = $(this).parents('.artist').children('.albums');
-        if ($albums.css('display') !== 'none') {
-            $albums.hide();
-        } else {
-            $albums.show();
-        }
+        $(this).parents('.artist').children('.albums').toggle();
+    }).on('mousedown', 'a.song', function() {
+        var id = $(this).attr('data-id');
+        $.get(server + '/play/' + id);
     });
+
 });
