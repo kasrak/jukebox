@@ -8,10 +8,10 @@ var Library = (function() {
         _albums  = [],
         _songs   = [];
 
-    function Artist(name, albums) {
+    var Artist = function(name, albums) {
         this.name = name;
         this.albums = albums || [];
-    }
+    };
 
     Artist.prototype.songs = function() {
         var artistSongs = [];
@@ -21,17 +21,21 @@ var Library = (function() {
         return artistSongs.sort(compare);
     };
 
-    function Album(name, artist, songs) {
+    var Album = function(name, artist, songs) {
         this.name = name;
         this.artist = artist;
         this.songs = songs || [];
-    }
+    };
 
-    function Song(id, name, album) {
+    var Song = function(id, name, album) {
         this.id = id;
         this.name = name;
         this.album = album;
-    }
+    };
+
+    Song.prototype.artist = function() {
+        return this.album.artist;
+    };
 
     function load(success) {
         $.getJSON(server + '/songs', function(data) {
