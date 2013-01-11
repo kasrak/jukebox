@@ -60,9 +60,14 @@ button, input {
     cursor: pointer;
 }
 
+a.artist, a.song {
+    display: block;
+}
+
 a.artist {
     font-size: 22px;
     font-weight: bold;
+    margin: 5px 0;
 }
 
 a.song {
