@@ -4,20 +4,69 @@ var server = '';
 
 var Library = (function() {
     var library = {},
-        _artists = null,
-        _songs = null;
+        _artists = [],
+        _albums  = [],
+        _songs   = [];
 
+    function Artist(name, albums) {
+        this.name = name;
+        this.albums = albums || [];
+    }
+
+    Artist.prototype.songs = function() {
+        var artistSongs = [];
+        _.each(this.albums, function(album) {
+            artistSongs = artistSongs.concat(album.songs);
+        });
+        return artistSongs.sort(compare);
+    };
+
+    function Album(name, artist, songs) {
+        this.name = name;
+        this.artist = artist;
+        this.songs = songs || [];
+    }
+
+    function Song(id, name, album) {
+        this.id = id;
+        this.name = name;
+        this.album = album;
+    }
 
     function load(success) {
-        $.getJSON(server + '/songs', function(data, status) {
+        $.getJSON(server + '/songs', function(data) {
             if (data.error && data.error == 'not ready') {
-                setTimeout(load, 500);
+                setTimeout(load, 500, success); // TODO bug: never gets called
             } else {
-                library = data;
 
                 // Destroy caches
-                _artists = null;
-                _songs = null;
+                _artists = [];
+                _albums = [];
+                _songs = [];
+
+                _.each(data, function(dataAlbums, artistName) {
+                    var artist = new Artist(artistName);
+                    _artists.push(artist);
+
+                    _.each(dataAlbums, function(dataSongs, albumName) {
+                        var album = new Album(albumName, artist);
+                        _albums.push(album);
+                        artist.albums.push(album);
+
+                        _.each(dataSongs, function(dataSong) {
+                            var song = new Song(dataSong[1], dataSong[0], album);
+                            _songs.push(song);
+                            album.songs.push(song);
+                        });
+                    });
+
+                    artist.albums = artist.albums.sort(compare);
+                    library[artistName] = artist;
+                });
+
+                _artists = _artists.sort(compare);
+                _albums = _albums.sort(compare);
+                _songs = _songs.sort(compare);
 
                 success();
             }
@@ -25,53 +74,24 @@ var Library = (function() {
     }
 
     function isEmpty() {
-        return artists().length === 0;
+        return _.isEmpty(library);
     }
 
     function artists() {
-        if (!_artists) {
-            _artists = Object.keys(library).sort(stringCompare);
-        }
-
         return _artists;
     }
 
-    function albums(artist) {
-        return (library[artist]) ? Object.keys(library[artist]).sort(stringCompare) : [];
+    function albums() {
+        return _albums;
     }
 
-    function songs(artist, album) {
-        if (!artist) {
-            // all songs
-            if (!_songs) {
-                _songs = [];
-                _.each(artists(), function(artist) {
-                    _songs = _songs.concat(songs(artist));
-                });
-
-                _songs = _songs.sort(songCompare);
-            }
-
-            return _songs;
-        } else if (!album) {
-            // all of artist's songs
-            var artistSongs = [];
-            _.each(library[artist], function(albumSongs) {
-                artistSongs = artistSongs.concat(albumSongs);
-            });
-            return artistSongs;
-        } else {
-            return (library[artist]) ? library[artist][album].sort(songCompare) : [];
-        }
+    function songs() {
+        return _songs;
     }
 
-    function songCompare(a, b) {
-        return stringCompare(a[0], b[0]);
-    }
-
-    function stringCompare(a, b) {
-        a = a.trim().toLowerCase();
-        b = b.trim().toLowerCase();
+    function compare(a, b) {
+        a = a.name.trim().toLowerCase();
+        b = b.name.trim().toLowerCase();
 
         if (a.slice(0, 4) == "the ") a = a.slice(4);
         if (b.slice(0, 4) == "the ") b = b.slice(4);
@@ -160,14 +180,14 @@ function renderArtistsView(library, container) {
     container.html('');
 
     _.each(library.artists(), function(artist) {
-        var $artist = $('<div class="artist">').html('<a class="artist">' + artist + '</a>'),
+        var $artist = $('<div class="artist">').html('<a class="artist">' + artist.name + '</a>'),
             $albums = $('<div class="albums">');
-        
-        _.each(library.albums(artist), function(album) {
-            $albums.append('<h3>' + album + '</h3>');
+
+        _.each(artist.albums, function(album) {
+            $albums.append('<h3>' + album.name + '</h3>');
             
-            _.each(library.songs(artist, album), function(song) {
-                $albums.append('<a class="song" data-id="' + song[1] + '">' + song[0] + '</a>');
+            _.each(album.songs, function(song) {
+                $albums.append('<a class="song" data-id="' + song.id + '">' + song.name + '</a>');
             });
         });
 
