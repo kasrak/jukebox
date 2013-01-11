@@ -37,6 +37,10 @@ var Library = (function() {
         return this.album.artist;
     };
 
+    Song.prototype.artist = function() {
+        return this.album.artist;
+    };
+
     function load(success) {
         $.getJSON(server + '/songs', function(data) {
             if (data.error && data.error == 'not ready') {
