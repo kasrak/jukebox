@@ -101,13 +101,13 @@
                 break;
         }
         
-        MPMediaItem *now_playing = [player nowPlayingItem];
+        MPMediaItem *nowPlaying = [player nowPlayingItem];
         NSDictionary *status = [NSDictionary dictionaryWithObjectsAndKeys:
                                 [NSNumber numberWithFloat:player.volume*100], @"volume",
                                 state, @"state",
-                                [now_playing valueForKey:MPMediaItemPropertyTitle], @"title",
-                                [now_playing valueForKey:MPMediaItemPropertyAlbumTitle], @"album",
-                                [now_playing valueForKey:MPMediaItemPropertyArtist], @"artist",
+                                [nowPlaying valueForKey:MPMediaItemPropertyTitle], @"title",
+                                [nowPlaying valueForKey:MPMediaItemPropertyAlbumTitle], @"album",
+                                [nowPlaying valueForKey:MPMediaItemPropertyArtist], @"artist",
                                 nil];
         
         NSData *json = [NSJSONSerialization dataWithJSONObject:status options:NSJSONWritingPrettyPrinted error:nil];

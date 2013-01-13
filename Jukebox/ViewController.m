@@ -18,7 +18,7 @@
 
 @implementation ViewController
 
-@synthesize ipLabel, playButton;
+@synthesize ipLabel, currentSongLabel, currentArtistLabel, playButton;
 
 - (void)viewDidLoad
 {
@@ -26,6 +26,7 @@
     player = [MPMusicPlayerController iPodMusicPlayer];
 
     [self playbackStateChanged:nil];
+    [self nowPlayingItemChanged:nil];
     [ipLabel setText:[self getIPAddress]];
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
@@ -34,6 +35,12 @@
      addObserver: self
      selector:    @selector (playbackStateChanged:)
      name:        MPMusicPlayerControllerPlaybackStateDidChangeNotification
+     object:      player];
+
+    [notificationCenter
+     addObserver: self
+     selector:    @selector (nowPlayingItemChanged:)
+     name:        MPMusicPlayerControllerNowPlayingItemDidChangeNotification
      object:      player];
 
     [player beginGeneratingPlaybackNotifications];
@@ -88,7 +95,13 @@
     } else if (player.playbackState == MPMusicPlaybackStatePaused || player.playbackState == MPMusicPlaybackStateStopped) {
         [playButton setTitle:@"Play" forState:UIControlStateNormal];
     }
+}
 
+- (void)nowPlayingItemChanged:(id)sender
+{
+    MPMediaItem *nowPlaying = [player nowPlayingItem];
+    [currentSongLabel setText:[nowPlaying valueForKey:MPMediaItemPropertyTitle]];
+    [currentArtistLabel setText:[nowPlaying valueForKey:MPMediaItemPropertyArtist]];
 }
 
 - (IBAction)playTapped:(id)sender
@@ -98,6 +111,16 @@
     } else if (player.playbackState == MPMusicPlaybackStatePaused || player.playbackState == MPMusicPlaybackStateStopped) {
         [player play];
     }
+}
+
+- (IBAction)nextTapped:(id)sender
+{
+    [player skipToNextItem];
+}
+
+- (IBAction)prevTapped:(id)sender
+{
+    [player skipToPreviousItem];
 }
 
 - (void)didReceiveMemoryWarning
