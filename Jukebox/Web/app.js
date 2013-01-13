@@ -1,6 +1,7 @@
 'use strict';
 
-var server = 'http://192.168.0.116:8989';
+// use #hash in url to change server (no trailing slash)
+var server = window.location.hash.substr(1);
 
 var Library = (function() {
     var library = {},
