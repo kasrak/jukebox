@@ -21,29 +21,28 @@
                 <div class="title"></div>
                 <div class="artist"></div>
             </div>
-
         </div>
 
         <div id="library">
-        Loading...
+            <div class="loading">Loading...</div>
         </div>
 
         <script type="template" id="song_template">
-            <tr data-id="{{ id }}" class="song">
-                <td>{{ name }}</td>
-                <td>{{ album.artist.name }}</td>
-                <td>{{ album.name }}</td>
-            </tr>
+            <div data-id="{{ id }}" class="song">
+                <span class="name">{{ name }}</span>
+                <span class="artist">{{ album.artist.name }}</span>
+                <span class="album">{{ album.name }}</span>
+            </div>
         </script>
 
         <script type="template" id="library_template">
-            <table>
-                <tr>
-                    <th>Title</th>
-                    <th>Artist</th>
-                    <th>Album</th>
-                </tr>
-            </table>
+            <div class="songlist">
+                <div class="header">
+                    <span class="name">Title</span>
+                    <span class="artist">Artist</span>
+                    <span class="album">Album</span>
+                </div>
+            </div>
         </script>
     </body>
 </html>

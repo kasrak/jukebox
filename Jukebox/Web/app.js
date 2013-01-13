@@ -182,15 +182,14 @@ function renderView(library, container) {
         return;
     }
 
-    var table = $(Mustache.render($('#library_template').html())),
-        tbody = table.find('tbody'),
+    var songlist = $(Mustache.render($('#library_template').html())),
         row = Mustache.compile($('#song_template').html());
 
-    container.html(table);
     _.each(library.songs(), function(song) {
-        tbody.append(row(song));
+        songlist.append(row(song));
     });
 
+    container.html(songlist);
 }
 
 $(function() {
@@ -200,6 +199,7 @@ $(function() {
         $play = $('#play');
 
     Library.load(function() {
+        $np.css('visibility', 'visible');
         renderView(Library, $library);
     });
 
