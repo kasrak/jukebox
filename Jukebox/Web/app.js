@@ -1,6 +1,7 @@
 'use strict';
 
-var server = '';
+// use #hash in url to change server (no trailing slash)
+var server = window.location.hash.substr(1);
 
 var Library = (function() {
     var library = {},
@@ -175,31 +176,34 @@ var Status = {
     }
 };
 
-function renderArtistsView(library, container) {
+function renderView(library, container) {
     if (library.isEmpty()) {
         container.html('No songs to display');
         return;
     }
 
-    container.html('');
+    var songlist = $(Mustache.render($('#library_template').html())),
+        row = Mustache.compile($('#song_template').html());
 
-    _.each(library.artists(), function(artist) {
-        var $artist = $('<div class="artist">').html('<a class="artist">' + artist.name + '</a>'),
-            $albums = $('<div class="albums">');
-
-        _.each(artist.albums, function(album) {
-            $albums.append('<h3>' + album.name + '</h3>');
-            
-            _.each(album.songs, function(song) {
-                $albums.append('<a class="song" data-id="' + song.id + '">' + song.name + '</a>');
-            });
-        });
-
-        $artist.append($albums);
-        container.append($artist);
+    _.each(library.songs(), function(song) {
+        songlist.append(row(song));
     });
 
-    $('div.albums').hide();
+    container.html(songlist);
+}
+
+function prevSong() {
+    $.get(server + '/previous');
+}
+
+function nextSong() {
+    $.get(server + '/next');
+}
+
+function togglePlay() {
+    $.get(server + '/toggle_play');
+    var state = Status.get('state') == 'paused' ? 'playing' : 'paused';
+    Status.set('state', state);
 }
 
 $(function() {
@@ -209,7 +213,8 @@ $(function() {
         $play = $('#play');
 
     Library.load(function() {
-        renderArtistsView(Library, $library);
+        $np.css('visibility', 'visible');
+        renderView(Library, $library);
     });
 
     Status.on('artist', function(key, value) {
@@ -227,18 +232,23 @@ $(function() {
         }
     }).startUpdating();
 
-    $('#previous').on('mousedown', function() {
-        $.get(server + '/previous');
-    });
+    $('#previous').on('mousedown', prevSong);
+    $('#next').on('mousedown', nextSong);
+    $play.on('mousedown', togglePlay);
 
-    $('#next').on('mousedown', function() {
-        $.get(server + '/next');
-    });
-
-    $play.on('mousedown', function() {
-        $.get(server + '/toggle_play');
-        var state = Status.get('state') == 'paused' ? 'playing' : 'paused';
-        Status.set('state', state);
+    $(document).on('keydown', function(e) {
+        switch (e.keyCode) {
+            case 39:
+                nextSong();
+                break;
+            case 37:
+                prevSong();
+                break;
+            case 32:
+                togglePlay();
+                return false;
+                break;
+        }
     });
 
     $volume.on('change', _.debounce(
@@ -247,9 +257,7 @@ $(function() {
         }, $volume)
     , 100));
 
-    $library.on('click', 'a.artist', function() {
-        $(this).parents('.artist').children('.albums').toggle();
-    }).on('mousedown', 'a.song', function() {
+    $library.on('mousedown', 'tr.song', function() {
         var id = $(this).attr('data-id');
         $.get(server + '/play/' + id);
     });
