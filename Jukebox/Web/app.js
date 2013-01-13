@@ -192,6 +192,20 @@ function renderView(library, container) {
     container.html(songlist);
 }
 
+function prevSong() {
+    $.get(server + '/previous');
+}
+
+function nextSong() {
+    $.get(server + '/next');
+}
+
+function togglePlay() {
+    $.get(server + '/toggle_play');
+    var state = Status.get('state') == 'paused' ? 'playing' : 'paused';
+    Status.set('state', state);
+}
+
 $(function() {
     var $library = $('#library'),
         $np = $('#now_playing'),
@@ -218,18 +232,23 @@ $(function() {
         }
     }).startUpdating();
 
-    $('#previous').on('mousedown', function() {
-        $.get(server + '/previous');
-    });
+    $('#previous').on('mousedown', prevSong);
+    $('#next').on('mousedown', nextSong);
+    $play.on('mousedown', togglePlay);
 
-    $('#next').on('mousedown', function() {
-        $.get(server + '/next');
-    });
-
-    $play.on('mousedown', function() {
-        $.get(server + '/toggle_play');
-        var state = Status.get('state') == 'paused' ? 'playing' : 'paused';
-        Status.set('state', state);
+    $(document).on('keydown', function(e) {
+        switch (e.keyCode) {
+            case 39:
+                nextSong();
+                break;
+            case 37:
+                prevSong();
+                break;
+            case 32:
+                togglePlay();
+                return false;
+                break;
+        }
     });
 
     $volume.on('change', _.debounce(
