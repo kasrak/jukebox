@@ -6,8 +6,9 @@
 //  Copyright (c) 2012 Kasra. All rights reserved.
 //
 
-#import <ifaddrs.h>
 #import <arpa/inet.h>
+#import <ifaddrs.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 #import "ViewController.h"
 
@@ -17,12 +18,31 @@
 
 @implementation ViewController
 
-@synthesize ipLabel;
+@synthesize ipLabel, playButton;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    player = [MPMusicPlayerController iPodMusicPlayer];
+
+    [self playbackStateChanged:nil];
     [ipLabel setText:[self getIPAddress]];
+
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+
+    [notificationCenter
+     addObserver: self
+     selector:    @selector (playbackStateChanged:)
+     name:        MPMusicPlayerControllerPlaybackStateDidChangeNotification
+     object:      player];
+
+    [player beginGeneratingPlaybackNotifications];
+}
+
+- (void)dealloc
+{
+    [player endGeneratingPlaybackNotifications];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (NSString *)getIPAddress
@@ -59,6 +79,25 @@
     }
     NSString *addr = wifiAddress ? wifiAddress : cellAddress;
     return addr ? addr : @"0.0.0.0";
+}
+
+- (void)playbackStateChanged:(id)sender
+{
+    if (player.playbackState == MPMusicPlaybackStatePlaying) {
+        [playButton setTitle:@"Pause" forState:UIControlStateNormal];
+    } else if (player.playbackState == MPMusicPlaybackStatePaused || player.playbackState == MPMusicPlaybackStateStopped) {
+        [playButton setTitle:@"Play" forState:UIControlStateNormal];
+    }
+
+}
+
+- (IBAction)playTapped:(id)sender
+{
+    if (player.playbackState == MPMusicPlaybackStatePlaying) {
+        [player pause];
+    } else if (player.playbackState == MPMusicPlaybackStatePaused || player.playbackState == MPMusicPlaybackStateStopped) {
+        [player play];
+    }
 }
 
 - (void)didReceiveMemoryWarning

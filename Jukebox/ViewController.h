@@ -10,8 +10,15 @@
 
 @interface ViewController : UIViewController {
     IBOutlet UILabel *ipLabel;
+    IBOutlet UIButton *playButton;
+
+    MPMusicPlayerController *player;
 }
 
 @property (retain, nonatomic) IBOutlet UILabel *ipLabel;
+@property (retain, nonatomic) IBOutlet UIButton *playButton;
+
+- (IBAction)playTapped:(id)sender;
+- (void)playbackStateChanged:(id)sender;
 
 @end
