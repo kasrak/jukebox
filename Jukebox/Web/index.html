@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="font-awesome.css">
         <script src="underscore.js"></script>
         <script src="zepto.min.js"></script>
+        <script src="mustache.js"></script>
         <script src="app.js"></script>
     </head>
     <body>
@@ -24,7 +25,25 @@
         </div>
 
         <div id="library">
-            Loading...
+        Loading...
         </div>
+
+        <script type="template" id="song_template">
+            <tr data-id="{{ id }}" class="song">
+                <td>{{ name }}</td>
+                <td>{{ album.artist.name }}</td>
+                <td>{{ album.name }}</td>
+            </tr>
+        </script>
+
+        <script type="template" id="library_template">
+            <table>
+                <tr>
+                    <th>Title</th>
+                    <th>Artist</th>
+                    <th>Album</th>
+                </tr>
+            </table>
+        </script>
     </body>
 </html>

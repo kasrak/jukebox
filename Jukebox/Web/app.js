@@ -1,6 +1,6 @@
 'use strict';
 
-var server = '';
+var server = 'http://192.168.0.116:8989';
 
 var Library = (function() {
     var library = {},
@@ -175,31 +175,21 @@ var Status = {
     }
 };
 
-function renderArtistsView(library, container) {
+function renderView(library, container) {
     if (library.isEmpty()) {
         container.html('No songs to display');
         return;
     }
 
-    container.html('');
+    var table = $(Mustache.render($('#library_template').html())),
+        tbody = table.find('tbody'),
+        row = Mustache.compile($('#song_template').html());
 
-    _.each(library.artists(), function(artist) {
-        var $artist = $('<div class="artist">').html('<a class="artist">' + artist.name + '</a>'),
-            $albums = $('<div class="albums">');
-
-        _.each(artist.albums, function(album) {
-            $albums.append('<h3>' + album.name + '</h3>');
-            
-            _.each(album.songs, function(song) {
-                $albums.append('<a class="song" data-id="' + song.id + '">' + song.name + '</a>');
-            });
-        });
-
-        $artist.append($albums);
-        container.append($artist);
+    container.html(table);
+    _.each(library.songs(), function(song) {
+        tbody.append(row(song));
     });
 
-    $('div.albums').hide();
 }
 
 $(function() {
@@ -209,7 +199,7 @@ $(function() {
         $play = $('#play');
 
     Library.load(function() {
-        renderArtistsView(Library, $library);
+        renderView(Library, $library);
     });
 
     Status.on('artist', function(key, value) {
@@ -247,9 +237,7 @@ $(function() {
         }, $volume)
     , 100));
 
-    $library.on('click', 'a.artist', function() {
-        $(this).parents('.artist').children('.albums').toggle();
-    }).on('mousedown', 'a.song', function() {
+    $library.on('mousedown', 'tr.song', function() {
         var id = $(this).attr('data-id');
         $.get(server + '/play/' + id);
     });

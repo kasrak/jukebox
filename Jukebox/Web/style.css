@@ -54,29 +54,11 @@ button, input {
     margin-left: 20px;
 }
 
-#library a:hover {
-    text-decoration: underline;
+table {
+    border-spacing: 0;
+}
+
+tr.song:hover {
     background: #ffa;
     cursor: pointer;
-}
-
-a.artist, a.song {
-    display: block;
-}
-
-a.artist {
-    font-size: 22px;
-    font-weight: bold;
-    margin: 5px 0;
-}
-
-a.song {
-    font-size: 16px;
-    font-weight: normal;
-    padding-left: 20px;
-}
-
-h3 {
-    font-size: 16px;
-    margin-bottom: 3px;
 }
