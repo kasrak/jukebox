@@ -257,9 +257,8 @@ $(function() {
         }, $volume)
     , 100));
 
-    $library.on('mousedown', 'tr.song', function() {
+    $library.on('mousedown', '.song', function() {
         var id = $(this).attr('data-id');
         $.get(server + '/play/' + id);
     });
-
 });

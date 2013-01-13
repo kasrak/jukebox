@@ -1,0 +1,8 @@
+- Don't give up polling when the iOS device disappears
+- Columns sort
+- Search (in browser)
+- WebSockets for status updates
+- Mobile-friendly browser interface
+- App interface improvements (control buttons, now playing, port #)
+- Song queue
+- Playback progress bar (song length)
