@@ -18,7 +18,7 @@
 
 @implementation ViewController
 
-@synthesize ipLabel, currentSongLabel, currentArtistLabel, playButton;
+@synthesize ipLabel, currentSongLabel, currentArtistLabel, playButton, volumeSlider;
 
 - (void)viewDidLoad
 {
@@ -27,6 +27,7 @@
 
     [self playbackStateChanged:nil];
     [self nowPlayingItemChanged:nil];
+    [self volumeChanged:nil];
     [ipLabel setText:[self getIPAddress]];
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
@@ -41,6 +42,12 @@
      addObserver: self
      selector:    @selector (nowPlayingItemChanged:)
      name:        MPMusicPlayerControllerNowPlayingItemDidChangeNotification
+     object:      player];
+
+    [notificationCenter
+     addObserver: self
+     selector:    @selector (volumeChanged:)
+     name:        MPMusicPlayerControllerVolumeDidChangeNotification
      object:      player];
 
     [player beginGeneratingPlaybackNotifications];
@@ -104,6 +111,11 @@
     [currentArtistLabel setText:[nowPlaying valueForKey:MPMediaItemPropertyArtist]];
 }
 
+- (void)volumeChanged:(id)sender
+{
+    [volumeSlider setValue:player.volume];
+}
+
 - (IBAction)playTapped:(id)sender
 {
     if (player.playbackState == MPMusicPlaybackStatePlaying) {
@@ -121,6 +133,12 @@
 - (IBAction)prevTapped:(id)sender
 {
     [player skipToPreviousItem];
+}
+
+- (IBAction)volumeSlid:(id)sender
+{
+    float vol = volumeSlider.value;
+    [player setVolume:vol];
 }
 
 - (void)didReceiveMemoryWarning
