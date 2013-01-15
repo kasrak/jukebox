@@ -94,11 +94,11 @@ var Library = (function() {
         return _songs;
     }
 
-    function clean(a) {
-        a = a.name.trim().toLowerCase();
-        a = a.replace(/^[^A-z0-9]*/g, "");
-        if (a.slice(0, 4) == "the ") a = a.slice(4);
-        return a;
+    function clean(str) {
+        str = str.name.trim().toLowerCase();
+        str = str.replace(/^[^A-z0-9]*/g, "");
+        if (str.slice(0, 4) == "the ") str = str.slice(4);
+        return str;
     }
 
     function compare(a, b) {
