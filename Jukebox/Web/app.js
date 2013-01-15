@@ -96,7 +96,7 @@ var Library = (function() {
 
     function clean(a) {
         a = a.name.trim().toLowerCase();
-        a = a.replace(/^[^A-z0-9]/g, "");
+        a = a.replace(/^[^A-z0-9]*/g, "");
         if (a.slice(0, 4) == "the ") a = a.slice(4);
         return a;
     }
