@@ -1,3 +1,7 @@
+/*jshint browser: true*/
+/*jshint globalstrict: true*/
+/*global $ _ Mustache */
+
 'use strict';
 
 // use #hash in url to change server (no trailing slash)
@@ -249,15 +253,14 @@ $(function() {
             case 32:
                 togglePlay();
                 return false;
-                break;
         }
     });
 
     $volume.on('change', _.debounce(
         _.bind(function() {
             $.get(server + '/volume/' + $(this).val());
-        }, $volume)
-    , 100));
+        }, $volume),
+    100));
 
     $library.on('mousedown', '.song', function() {
         var id = $(this).attr('data-id');
