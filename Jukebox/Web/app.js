@@ -94,11 +94,9 @@ var Library = (function() {
         return _songs;
     }
 
-    function clean(str) {
-        str = str.name.trim().toLowerCase();
-        str = str.replace(/^[^A-z0-9]*/g, "");
-        if (str.slice(0, 4) == "the ") str = str.slice(4);
-        return str;
+    function clean(item) {
+        // Remove non-alphanumeric characters and "the " from the beginning of the item's name
+        return item.name.toLowerCase().replace(/^[^A-z0-9]*(the )?/g, "");
     }
 
     function compare(a, b) {
