@@ -96,7 +96,7 @@ var Library = (function() {
 
     function clean(item) {
         // Remove non-alphanumeric characters and "the " from the beginning of the item's name
-        return item.name.toLowerCase().replace(/^[^A-z0-9]*(the )?/g, "");
+        return item.name.toLowerCase().replace(/^[^a-z0-9]*(the )?/g, "");
     }
 
     function compare(a, b) {
