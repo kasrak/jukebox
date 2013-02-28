@@ -1,6 +1,6 @@
 /*jshint browser: true*/
 /*jshint globalstrict: true*/
-/*global $ _ Mustache */
+/*global $, _, Mustache */
 
 'use strict';
 
