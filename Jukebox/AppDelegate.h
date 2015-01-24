@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 
 @class ViewController;
-@class RoutingHTTPServer;
+@class GCDWebServer;
 @class MPMusicPlayerController;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
-    RoutingHTTPServer *httpServer;
+    GCDWebServer *httpServer;
     NSString *library;
     MPMusicPlayerController *player;
 }
