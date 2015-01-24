@@ -1,11 +1,3 @@
-//
-//  ViewController.m
-//  Jukebox
-//
-//  Created by Kasra Kyanzadeh on 2012-12-24.
-//  Copyright (c) 2012 Kasra. All rights reserved.
-//
-
 #import <arpa/inet.h>
 #import <ifaddrs.h>
 #import <MediaPlayer/MediaPlayer.h>
@@ -144,7 +136,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end
