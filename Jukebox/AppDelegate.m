@@ -137,7 +137,7 @@
     [self.window makeKeyAndVisible];
     
 
-    player = [MPMusicPlayerController iPodMusicPlayer];
+    player = [MPMusicPlayerController systemMusicPlayer];
     [player setQueueWithQuery:[MPMediaQuery songsQuery]];
     [player setShuffleMode:MPMusicShuffleModeSongs];
     [player setRepeatMode:MPMusicRepeatModeAll];

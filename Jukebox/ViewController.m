@@ -23,7 +23,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    player = [MPMusicPlayerController iPodMusicPlayer];
+    player = [MPMusicPlayerController systemMusicPlayer];
 
     [self playbackStateChanged:nil];
     [self nowPlayingItemChanged:nil];
