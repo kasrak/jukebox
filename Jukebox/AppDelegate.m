@@ -10,22 +10,19 @@
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    library = nil;
-    
-    httpServer = [[GCDWebServer alloc] init];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    self.httpServer = [[GCDWebServer alloc] init];
 
     NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
-    [httpServer addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:@"index.html" cacheAge:3600 allowRangeRequests:NO];
+    [self.httpServer addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:@"index.html" cacheAge:3600 allowRangeRequests:NO];
     //[httpServer setDefaultHeader:@"Access-Control-Allow-Origin" value:@"*"];
 
-    [httpServer addHandlerForMethod:@"GET" path:@"/songs" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
+    [self.httpServer addHandlerForMethod:@"GET" path:@"/songs" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
      ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
          GCDWebServerDataResponse *res;
 
-         if (library) {
-             res = [[GCDWebServerDataResponse alloc] initWithText:library];
+         if (self.library) {
+             res = [[GCDWebServerDataResponse alloc] initWithText:self.library];
          } else {
              res = [[GCDWebServerDataResponse alloc] initWithText:@"{'error': 'not ready'}"];
          }
@@ -34,7 +31,7 @@
          completionBlock(res);
      }];
 
-    [httpServer addHandlerForMethod:@"GET" pathRegex:@"/play/(.*)" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
+    [self.httpServer addHandlerForMethod:@"GET" pathRegex:@"/play/(.*)" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
      ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
          NSArray *captures = [request attributeForKey:GCDWebServerRequestAttribute_RegexCaptures];
          NSNumber *persistentID = @(strtoull([captures[0] UTF8String], NULL, 0));
@@ -46,9 +43,9 @@
          NSString *responseString;
          if (query.items.count) {
              MPMediaItem *song = [query.items objectAtIndex:0];
-             [player stop];
-             [player setNowPlayingItem:song];
-             [player play];
+             [self.musicPlayer stop];
+             [self.musicPlayer setNowPlayingItem:song];
+             [self.musicPlayer play];
              responseString = @"{}";
          } else {
              responseString = @"{'error': 'not found'}";
@@ -59,44 +56,45 @@
          completionBlock(res);
      }];
 
-    [httpServer addHandlerForMethod:@"GET" path:@"/next" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
+    [self.httpServer addHandlerForMethod:@"GET" path:@"/next" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
      ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
-         [player skipToNextItem];
+         [self.musicPlayer skipToNextItem];
          completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:@{}]);
      }];
 
-    [httpServer addHandlerForMethod:@"GET" path:@"/previous" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
+    [self.httpServer addHandlerForMethod:@"GET" path:@"/previous" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
      ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
-         [player skipToPreviousItem];
+         [self.musicPlayer skipToPreviousItem];
          completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:@{}]);
      }];
 
-    [httpServer addHandlerForMethod:@"GET" path:@"/toggle_play" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
+    [self.httpServer addHandlerForMethod:@"GET" path:@"/toggle_play" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
      ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
          NSString *responseState = @"unknown";
-         if (player.playbackState == MPMusicPlaybackStatePlaying) {
-             [player pause];
+         MPMusicPlaybackState playbackState = self.musicPlayer.playbackState;
+         if (playbackState == MPMusicPlaybackStatePlaying) {
+             [self.musicPlayer pause];
              responseState = @"paused";
-         } else if (player.playbackState == MPMusicPlaybackStatePaused || player.playbackState == MPMusicPlaybackStateStopped) {
-             [player play];
+         } else if (playbackState == MPMusicPlaybackStatePaused || playbackState == MPMusicPlaybackStateStopped) {
+             [self.musicPlayer play];
              responseState = @"playing";
          }
 
          completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:@{@"state": responseState}]);
      }];
 
-    [httpServer addHandlerForMethod:@"GET" pathRegex:@"/volume/(.*)" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
+    [self.httpServer addHandlerForMethod:@"GET" pathRegex:@"/volume/(.*)" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
      ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
          NSArray *captures = [request attributeForKey:GCDWebServerRequestAttribute_RegexCaptures];
          float volume = [captures[0] integerValue] / 100.0;
-         [player setVolume:volume];
+         [self.musicPlayer setVolume:volume];
          completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:@{}]);
      }];
 
-    [httpServer addHandlerForMethod:@"GET" path:@"/status" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
+    [self.httpServer addHandlerForMethod:@"GET" path:@"/status" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
      ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
          NSString *state;
-         switch (player.playbackState) {
+         switch (self.musicPlayer.playbackState) {
              case MPMusicPlaybackStateStopped:
              case MPMusicPlaybackStatePaused:
                  state = @"paused";
@@ -109,9 +107,9 @@
                  break;
          }
 
-         MPMediaItem *nowPlaying = [player nowPlayingItem];
+         MPMediaItem *nowPlaying = [self.musicPlayer nowPlayingItem];
          NSDictionary *status = @{
-                                  @"volume": @(player.volume * 100),
+                                  @"volume": @(self.musicPlayer.volume * 100),
                                   @"state": state,
                                   @"title": [nowPlaying valueForKey:MPMediaItemPropertyTitle],
                                   @"album": [nowPlaying valueForKey:MPMediaItemPropertyAlbumTitle],
@@ -121,7 +119,7 @@
          completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:status]);
      }];
 
-    [httpServer startWithPort:8989 bonjourName:nil];
+    [self.httpServer startWithPort:8989 bonjourName:nil];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
@@ -129,10 +127,10 @@
     [self.window makeKeyAndVisible];
     
 
-    player = [MPMusicPlayerController systemMusicPlayer];
-    [player setQueueWithQuery:[MPMediaQuery songsQuery]];
-    [player setShuffleMode:MPMusicShuffleModeSongs];
-    [player setRepeatMode:MPMusicRepeatModeAll];
+    self.musicPlayer = [MPMusicPlayerController systemMusicPlayer];
+    [self.musicPlayer setQueueWithQuery:[MPMediaQuery songsQuery]];
+    [self.musicPlayer setShuffleMode:MPMusicShuffleModeSongs];
+    [self.musicPlayer setRepeatMode:MPMusicRepeatModeAll];
     
     [self performSelectorInBackground:@selector(scanLibrary) withObject:self];
     
@@ -175,7 +173,7 @@
     }
     
     NSData *json = [NSJSONSerialization dataWithJSONObject:songs options:NSJSONWritingPrettyPrinted error:nil];
-    library = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
+    self.library = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
 }
 
 @end
