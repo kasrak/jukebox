@@ -10,6 +10,7 @@
 		0F103397A81797251F287AE9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E2309767139F40C9D6B6C747 /* libPods.a */; };
 		DEE8C3321A73441700B60662 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DEE8C3311A73441700B60662 /* Launch Screen.xib */; };
 		DEE8C3361A734C8D00B60662 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DEE8C3351A734C8D00B60662 /* Media.xcassets */; };
+		DEE8C3391A735A6100B60662 /* JukeboxHTTPServer.m in Sources */ = {isa = PBXBuildFile; fileRef = DEE8C3381A735A6100B60662 /* JukeboxHTTPServer.m */; };
 		DEE9E30F16891C650083C0F1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEE9E30E16891C650083C0F1 /* UIKit.framework */; };
 		DEE9E31116891C650083C0F1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEE9E31016891C650083C0F1 /* Foundation.framework */; };
 		DEE9E31316891C650083C0F1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEE9E31216891C650083C0F1 /* CoreGraphics.framework */; };
@@ -32,6 +33,8 @@
 		DB7237DAFF6A3939A6A74633 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		DEE8C3311A73441700B60662 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		DEE8C3351A734C8D00B60662 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		DEE8C3371A735A6100B60662 /* JukeboxHTTPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JukeboxHTTPServer.h; sourceTree = "<group>"; };
+		DEE8C3381A735A6100B60662 /* JukeboxHTTPServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JukeboxHTTPServer.m; sourceTree = "<group>"; };
 		DEE9E30A16891C650083C0F1 /* Jukebox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jukebox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DEE9E30E16891C650083C0F1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		DEE9E31016891C650083C0F1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -117,6 +120,8 @@
 				DEE9E32916891C650083C0F1 /* ViewController.xib */,
 				DEE8C3311A73441700B60662 /* Launch Screen.xib */,
 				DEE8C3351A734C8D00B60662 /* Media.xcassets */,
+				DEE8C3371A735A6100B60662 /* JukeboxHTTPServer.h */,
+				DEE8C3381A735A6100B60662 /* JukeboxHTTPServer.m */,
 			);
 			path = Jukebox;
 			sourceTree = "<group>";
@@ -250,6 +255,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DEE9E31B16891C650083C0F1 /* main.m in Sources */,
+				DEE8C3391A735A6100B60662 /* JukeboxHTTPServer.m in Sources */,
 				DEE9E31F16891C650083C0F1 /* AppDelegate.m in Sources */,
 				DEE9E32816891C650083C0F1 /* ViewController.m in Sources */,
 			);

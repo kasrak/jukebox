@@ -1,13 +1,10 @@
-#import <UIKit/UIKit.h>
-
 @class ViewController;
-@class GCDWebServer;
+@class JukeboxHTTPServer;
 @class MPMusicPlayerController;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) GCDWebServer *httpServer;
-@property (copy, nonatomic) NSString *library;
+@property (strong, nonatomic) JukeboxHTTPServer *httpServer;
 @property (strong, nonatomic) MPMusicPlayerController *musicPlayer;
 
 @property (strong, nonatomic) UIWindow *window;
