@@ -337,6 +337,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 83D85E106B85D27911573900 /* Pods.debug.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Jukebox/Jukebox-Prefix.pch";
 				INFOPLIST_FILE = "Jukebox/Jukebox-Info.plist";
@@ -350,6 +351,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DB7237DAFF6A3939A6A74633 /* Pods.release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Jukebox/Jukebox-Prefix.pch";
 				INFOPLIST_FILE = "Jukebox/Jukebox-Info.plist";
