@@ -189,10 +189,10 @@ function renderView(library, container) {
     }
 
     var songlist = $(Mustache.render($('#library_template').html())),
-        row = Mustache.compile($('#song_template').html());
+        rowTemplate = $('#song_template').html();
 
     _.each(library.songs(), function(song) {
-        songlist.append(row(song));
+        songlist.append(Mustache.render(rowTemplate, song));
     });
 
     container.html(songlist);
