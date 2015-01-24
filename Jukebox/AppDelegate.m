@@ -15,7 +15,6 @@
 
     NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
     [self.httpServer addGETHandlerForBasePath:@"/" directoryPath:webPath indexFilename:@"index.html" cacheAge:3600 allowRangeRequests:NO];
-    //[httpServer setDefaultHeader:@"Access-Control-Allow-Origin" value:@"*"];
 
     [self.httpServer addHandlerForMethod:@"GET" path:@"/songs" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
      ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
@@ -119,7 +118,7 @@
          completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:status]);
      }];
 
-    [self.httpServer startWithPort:8989 bonjourName:nil];
+    [self.httpServer startWithPort:8989 bonjourName:@"kasrak.Jukebox"];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];

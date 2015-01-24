@@ -44,7 +44,7 @@
                     </connections>
                 </button>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="current_song" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" useAutomaticPreferredMaxLayoutWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                    <rect key="frame" x="12" y="364" width="295" height="30"/>
+                    <rect key="frame" x="12" y="370" width="295" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="mT9-tc-wUf"/>
                     </constraints>
@@ -88,7 +88,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sp4-yy-ewy">
-                    <rect key="frame" x="0.0" y="81" width="320" height="259"/>
+                    <rect key="frame" x="0.0" y="81" width="320" height="265"/>
                 </imageView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="25">
                     <rect key="frame" x="228" y="454" width="56" height="33"/>
@@ -113,7 +113,7 @@
                 <constraint firstItem="26" firstAttribute="centerY" secondItem="25" secondAttribute="centerY" id="X3e-1v-w7W"/>
                 <constraint firstItem="20" firstAttribute="top" secondItem="31" secondAttribute="bottom" constant="24" id="Zjw-sq-LSG"/>
                 <constraint firstItem="tci-Te-WYr" firstAttribute="top" secondItem="6" secondAttribute="top" id="d5b-Kh-DgK"/>
-                <constraint firstItem="31" firstAttribute="top" secondItem="30" secondAttribute="bottom" constant="6" id="dJ3-vq-LeG"/>
+                <constraint firstItem="31" firstAttribute="top" secondItem="30" secondAttribute="bottom" id="dJ3-vq-LeG"/>
                 <constraint firstItem="sp4-yy-ewy" firstAttribute="top" secondItem="tci-Te-WYr" secondAttribute="bottom" id="gGQ-pt-q8j"/>
                 <constraint firstAttribute="centerX" secondItem="20" secondAttribute="centerX" id="gQl-Js-mTt"/>
                 <constraint firstAttribute="trailing" secondItem="sp4-yy-ewy" secondAttribute="trailing" id="iJS-5b-ERS"/>
