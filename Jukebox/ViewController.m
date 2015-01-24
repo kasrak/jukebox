@@ -79,16 +79,23 @@
 }
 
 - (void)playbackStateChanged:(id)sender {
-    if (self.musicPlayer.playbackState == MPMusicPlaybackStatePlaying) {
+    MPMusicPlaybackState playbackState = self.musicPlayer.playbackState;
+    if (playbackState == MPMusicPlaybackStatePlaying) {
         [self.playButton setImage:[UIImage imageNamed:@"Pause"] forState:UIControlStateNormal];
-    } else if (self.musicPlayer.playbackState == MPMusicPlaybackStatePaused || self.musicPlayer.playbackState == MPMusicPlaybackStateStopped) {
+    } else if (playbackState == MPMusicPlaybackStatePaused || playbackState == MPMusicPlaybackStateStopped) {
         [self.playButton setImage:[UIImage imageNamed:@"Play"] forState:UIControlStateNormal];
     }
 }
 
 - (void)nowPlayingItemChanged:(id)sender {
     MPMediaItem *nowPlaying = [self.musicPlayer nowPlayingItem];
-    self.artworkImageView.image = [[nowPlaying valueForKey:MPMediaItemPropertyArtwork] imageWithSize:self.artworkImageView.bounds.size];
+
+    UIImage *artwork = [[nowPlaying valueForKey:MPMediaItemPropertyArtwork] imageWithSize:self.artworkImageView.bounds.size];
+    if (!artwork) {
+        artwork = [UIImage imageNamed:@"AlbumPlaceholder"];
+    }
+    self.artworkImageView.image = artwork;
+
     [self.currentSongLabel setText:[nowPlaying valueForKey:MPMediaItemPropertyTitle]];
     [self.currentArtistLabel setText:[nowPlaying valueForKey:MPMediaItemPropertyArtist]];
 }

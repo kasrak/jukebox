@@ -93,8 +93,8 @@
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sp4-yy-ewy">
-                    <rect key="frame" x="0.0" y="81" width="320" height="265"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AlbumPlaceholder" translatesAutoresizingMaskIntoConstraints="NO" id="sp4-yy-ewy">
+                    <rect key="frame" x="12" y="93" width="296" height="253"/>
                 </imageView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="25">
                     <rect key="frame" x="228" y="454" width="56" height="33"/>
@@ -107,9 +107,9 @@
                     </connections>
                 </button>
             </subviews>
-            <color key="backgroundColor" red="0.083195233585858563" green="0.083195233585858563" blue="0.083195233585858563" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" red="0.078431372549019607" green="0.078431372549019607" blue="0.078431372549019607" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
-                <constraint firstItem="sp4-yy-ewy" firstAttribute="leading" secondItem="6" secondAttribute="leading" id="1vB-yn-00r"/>
+                <constraint firstItem="sp4-yy-ewy" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="12" id="1vB-yn-00r"/>
                 <constraint firstItem="31" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="12" id="3bf-Z4-4mK"/>
                 <constraint firstItem="26" firstAttribute="centerY" secondItem="20" secondAttribute="centerY" id="42G-5g-Hal"/>
                 <constraint firstAttribute="trailing" secondItem="31" secondAttribute="trailing" constant="12" id="45W-kU-Xds"/>
@@ -120,9 +120,9 @@
                 <constraint firstItem="20" firstAttribute="top" secondItem="31" secondAttribute="bottom" constant="24" id="Zjw-sq-LSG"/>
                 <constraint firstItem="tci-Te-WYr" firstAttribute="top" secondItem="6" secondAttribute="top" id="d5b-Kh-DgK"/>
                 <constraint firstItem="31" firstAttribute="top" secondItem="30" secondAttribute="bottom" id="dJ3-vq-LeG"/>
-                <constraint firstItem="sp4-yy-ewy" firstAttribute="top" secondItem="tci-Te-WYr" secondAttribute="bottom" id="gGQ-pt-q8j"/>
+                <constraint firstItem="sp4-yy-ewy" firstAttribute="top" secondItem="tci-Te-WYr" secondAttribute="bottom" constant="12" id="gGQ-pt-q8j"/>
                 <constraint firstAttribute="centerX" secondItem="20" secondAttribute="centerX" id="gQl-Js-mTt"/>
-                <constraint firstAttribute="trailing" secondItem="sp4-yy-ewy" secondAttribute="trailing" id="iJS-5b-ERS"/>
+                <constraint firstAttribute="trailing" secondItem="sp4-yy-ewy" secondAttribute="trailing" constant="12" id="iJS-5b-ERS"/>
                 <constraint firstItem="30" firstAttribute="leading" secondItem="6" secondAttribute="leading" constant="12" id="oGo-iZ-VVL"/>
                 <constraint firstAttribute="trailing" secondItem="tci-Te-WYr" secondAttribute="trailing" id="pfN-YN-9A5"/>
                 <constraint firstAttribute="trailing" secondItem="30" secondAttribute="trailing" constant="13" id="qCF-wS-BEg"/>
@@ -135,6 +135,7 @@
         </view>
     </objects>
     <resources>
+        <image name="AlbumPlaceholder" width="320" height="320"/>
         <image name="Next" width="56" height="33"/>
         <image name="Play" width="40" height="46"/>
         <image name="Previous" width="56" height="33"/>
