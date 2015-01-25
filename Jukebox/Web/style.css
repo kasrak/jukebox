@@ -66,6 +66,9 @@ body {
 
 #now_playing {
     visibility: hidden;
+    margin: 0 auto;
+    width: 300px;
+    text-align: center;
 }
 
 #now_playing .title {
