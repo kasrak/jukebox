@@ -82,8 +82,10 @@
     MPMusicPlaybackState playbackState = self.musicPlayer.playbackState;
     if (playbackState == MPMusicPlaybackStatePlaying) {
         [self.playButton setImage:[UIImage imageNamed:@"Pause"] forState:UIControlStateNormal];
+        [self.httpServer notifyEvent:@"playbackState" message:@"playing"];
     } else if (playbackState == MPMusicPlaybackStatePaused || playbackState == MPMusicPlaybackStateStopped) {
         [self.playButton setImage:[UIImage imageNamed:@"Play"] forState:UIControlStateNormal];
+        [self.httpServer notifyEvent:@"playbackState" message:@"paused"];
     }
 }
 
@@ -96,8 +98,17 @@
     }
     self.artworkImageView.image = artwork;
 
-    [self.currentSongLabel setText:[nowPlaying valueForKey:MPMediaItemPropertyTitle]];
-    [self.currentArtistLabel setText:[nowPlaying valueForKey:MPMediaItemPropertyArtist]];
+    NSString *song = [nowPlaying valueForKey:MPMediaItemPropertyTitle];
+    NSString *artist = [nowPlaying valueForKey:MPMediaItemPropertyArtist];
+
+    [self.currentSongLabel setText:song];
+    [self.currentArtistLabel setText:artist];
+
+    NSData *nowPlayingData = [NSJSONSerialization dataWithJSONObject:@{ @"song": nilToNull(song),
+                                                                        @"artist": nilToNull(artist) }
+                                                             options:0
+                                                               error:nil]; // TODO: check error
+    [self.httpServer notifyEvent:@"nowPlaying" message:[[NSString alloc] initWithData:nowPlayingData encoding:NSUTF8StringEncoding]];
 }
 
 - (IBAction)playTapped:(id)sender {

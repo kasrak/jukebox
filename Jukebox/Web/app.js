@@ -129,30 +129,6 @@ var Status = {
     data: {},
     callbacks: {},
 
-    update: function() {
-        var self = this;
-        $.getJSON(server + '/status', function(data) {
-            _.each(data, function(value, key) {
-                self.set(key, value, false);
-            });
-
-            if (self.isUpdating) {
-                setTimeout(function() {
-                    self.update();
-                }, 1500);
-            }
-        });
-    },
-
-    startUpdating: function() {
-        this.isUpdating = true;
-        this.update();
-    },
-
-    stopUpdating: function() {
-        this.isUpdating = false;
-    },
-
     set: function(key, value, silent) {
         if (!silent && value != this.data[key]) {
             this.trigger(key, value);
@@ -236,7 +212,7 @@ $(function() {
         } else {
             $play.addClass('icon-play');
         }
-    }).startUpdating();
+    });
 
     $('#previous').on('mousedown', prevSong);
     $('#next').on('mousedown', nextSong);
@@ -266,4 +242,28 @@ $(function() {
         var id = $(this).attr('data-id');
         $.get(server + '/play/' + id);
     });
+
+    if (!!window.EventSource) {
+        var source = new EventSource('/events');
+
+        source.addEventListener('nowPlaying', function(e) {
+            var json = JSON.parse(e.data);
+            Status.set('artist', json.artist);
+            Status.set('title', json.song);
+        });
+
+        source.addEventListener('playbackState', function(e) {
+            Status.set('state', e.data, false);
+        });
+
+        source.addEventListener('open', function(e) {
+            console.log('connection opened');
+        });
+
+        source.addEventListener('error', function(e) {
+            console.log('error', e);
+        });
+    } else {
+        alert("Sorry, your browser is not supported.");
+    }
 });

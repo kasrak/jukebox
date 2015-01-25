@@ -9,4 +9,6 @@
 
 - (NSURL *)serverURL;
 
+- (void)notifyEvent:(NSString *)event message:(NSString *)message;
+
 @end

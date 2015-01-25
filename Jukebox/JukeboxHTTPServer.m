@@ -3,6 +3,7 @@
 #import "GCDWebServer.h"
 #import "GCDWebServerRequest.h"
 #import "GCDWebServerDataResponse.h"
+#import "GCDWebServerStreamedResponse.h"
 
 #import <MediaPlayer/MPMediaQuery.h>
 #import <MediaPlayer/MediaPlayer.h>
@@ -10,6 +11,7 @@
 @interface JukeboxHTTPServer ()
 
 @property (nonatomic, strong) GCDWebServer *server;
+@property (nonatomic, strong) NSMapTable *listeners;
 
 @end
 
@@ -126,12 +128,25 @@
          NSDictionary *status = @{
                                   @"volume": @(self.musicPlayer.volume * 100),
                                   @"state": state,
-                                  @"title": [nowPlaying valueForKey:MPMediaItemPropertyTitle],
-                                  @"album": [nowPlaying valueForKey:MPMediaItemPropertyAlbumTitle],
-                                  @"artist": [nowPlaying valueForKey:MPMediaItemPropertyArtist],
+                                  @"title": nilToNull([nowPlaying valueForKey:MPMediaItemPropertyTitle]),
+                                  @"album": nilToNull([nowPlaying valueForKey:MPMediaItemPropertyAlbumTitle]),
+                                  @"artist": nilToNull([nowPlaying valueForKey:MPMediaItemPropertyArtist]),
                                   };
 
          completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:status]);
+     }];
+
+    self.listeners = [NSMapTable weakToStrongObjectsMapTable];
+    [server addHandlerForMethod:@"GET" path:@"/events" requestClass:[GCDWebServerRequest class] processBlock:
+     ^GCDWebServerResponse *(GCDWebServerRequest *request) {
+         return [GCDWebServerStreamedResponse responseWithContentType:@"text/event-stream" asyncStreamBlock:^(GCDWebServerBodyReaderCompletionBlock completionBlock) {
+
+             if (![self.listeners objectForKey:request]) {
+                 // TODO: remove from listeners when connection closes?
+                 GCDWebServerBodyReaderCompletionBlock blockCopy = [completionBlock copy];
+                 [self.listeners setObject:blockCopy forKey:request];
+             }
+         }];
      }];
 
     return server;
@@ -139,6 +154,19 @@
 
 - (void)startWithPort:(NSUInteger)port {
     [self.server startWithPort:port bonjourName:@"kasrak.Jukebox"];
+}
+
+- (void)notifyEvent:(NSString *)event message:(NSString *)message {
+    NSData *data = [[NSString stringWithFormat:@"event: %@\ndata: %@\n\n", event, message] dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSLog(@"Notifying %lu listeners...", (unsigned long)self.listeners.count);
+
+    // TODO: if message has newlines, need to start each line with "data:"
+
+    for (GCDWebServerRequest *key in self.listeners) {
+        GCDWebServerBodyReaderCompletionBlock block = [self.listeners objectForKey:key];
+        block(data, nil);
+    }
 }
 
 - (NSURL *)serverURL {
