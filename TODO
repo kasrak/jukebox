@@ -1,5 +1,5 @@
+- Finish SSE implementation (remove dead connections, broadcast volume changes)
 - Refactor
-- Broadcast volume changes to clients
 - Columns sort
 - Search (in browser)
 - Mobile-friendly browser interface

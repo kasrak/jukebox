@@ -108,42 +108,15 @@
          completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:@{}]);
      }];
 
-    [server addHandlerForMethod:@"GET" path:@"/status" requestClass:[GCDWebServerRequest class] asyncProcessBlock:
-     ^(GCDWebServerRequest *request, GCDWebServerCompletionBlock completionBlock) {
-         NSString *state;
-         switch (self.musicPlayer.playbackState) {
-             case MPMusicPlaybackStateStopped:
-             case MPMusicPlaybackStatePaused:
-                 state = @"paused";
-                 break;
-             case MPMusicPlaybackStatePlaying:
-                 state = @"playing";
-                 break;
-             default:
-                 state = @"unknown";
-                 break;
-         }
-
-         MPMediaItem *nowPlaying = [self.musicPlayer nowPlayingItem];
-         NSDictionary *status = @{
-                                  @"volume": @(self.musicPlayer.volume * 100),
-                                  @"state": state,
-                                  @"title": nilToNull([nowPlaying valueForKey:MPMediaItemPropertyTitle]),
-                                  @"album": nilToNull([nowPlaying valueForKey:MPMediaItemPropertyAlbumTitle]),
-                                  @"artist": nilToNull([nowPlaying valueForKey:MPMediaItemPropertyArtist]),
-                                  };
-
-         completionBlock([[GCDWebServerDataResponse alloc] initWithJSONObject:status]);
-     }];
-
     self.listeners = [NSMapTable weakToStrongObjectsMapTable];
     [server addHandlerForMethod:@"GET" path:@"/events" requestClass:[GCDWebServerRequest class] processBlock:
      ^GCDWebServerResponse *(GCDWebServerRequest *request) {
          return [GCDWebServerStreamedResponse responseWithContentType:@"text/event-stream" asyncStreamBlock:^(GCDWebServerBodyReaderCompletionBlock completionBlock) {
 
              if (![self.listeners objectForKey:request]) {
-                 // TODO: remove from listeners when connection closes?
+                 // TODO: remove from listeners when connection closes.
                  GCDWebServerBodyReaderCompletionBlock blockCopy = [completionBlock copy];
+                 // TODO: this is not thread safe.
                  [self.listeners setObject:blockCopy forKey:request];
              }
          }];
@@ -162,7 +135,7 @@
     NSLog(@"Notifying %lu listeners...", (unsigned long)self.listeners.count);
 
     // TODO: if message has newlines, need to start each line with "data:"
-
+    // TODO: don't do this on the main thread.
     for (GCDWebServerRequest *key in self.listeners) {
         GCDWebServerBodyReaderCompletionBlock block = [self.listeners objectForKey:key];
         block(data, nil);
