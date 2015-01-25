@@ -43,6 +43,25 @@ body {
     float: right;
     width: 200px;
     margin: 20px 50px 0 0;
+    -webkit-appearance: none;
+}
+
+#volume::-webkit-slider-runnable-track {
+    background: #aaa;
+    height: 5px;
+    width: 200px;
+    border: none;
+    border-radius: 3px;
+}
+
+#volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 16px;
+    background: #fff;
+    margin-top: -4px;
 }
 
 #now_playing {
